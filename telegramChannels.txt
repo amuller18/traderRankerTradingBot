@@ -1,0 +1,27 @@
+Low Cap Favorites:
+Channel ID: -1002166830181, Channel Title: PRIMAERE 🦍
+Channel ID: -1002045925410, Channel Title: Exy's Degen Lab 🎲
+Channel ID: -1002246179846, Channel Title: Fomo’s Gambling Gays
+Channel ID: -1002885276091, Channel Title: Shah’s gambles
+Channel ID: -1002319061500, Channel Title: Fight Club
+
+
+Mid/Large Cap Favorites:
+Channel ID: -1002137342141, Channel Title: Shah’s Trades
+Channel ID: -1001924457034, Channel Title: Levis Calls
+Channel ID: -1002049726578, Channel Title: Marcell's Trenches
+Channel ID: -1001835320066, Channel Title: $Bossman Calls
+Channel ID: -1001650441782, Channel Title: CTM Calls
+
+IDK Yet:
+Channel ID: -1002236647488, Channel Title: Degens by Gem
+Channel ID: -1002041138683, Channel Title: JR5's Cooks🧑‍🍳💸
+Channel ID: -1001164734593, Channel Title: SpiderCrypto Trading Journal
+Channel ID: -1002418087179, Channel Title: Macro Maxi’s
+Channel ID: -1002080773882, Channel Title: 🎯Lyxe’s Degen🎯
+Channel ID: -1002445941913, Channel Title: money printah
+Channel ID: -1002026330056, Channel Title: Dylan’s Degens 🧼
+Channel ID: -1001594723240, Channel Title: Catfish Calls by Poe
+
+Test Server:
+Channel ID: -1002461618969, Channel Title: crypto
