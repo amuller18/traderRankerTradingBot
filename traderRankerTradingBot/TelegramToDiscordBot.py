@@ -48,7 +48,7 @@ class TelegramToDiscordBot:
         self.jupiter_limit = JupiterLimit(Config.SOLANA_TRADING_WALLET_PRIVATE_KEY, self.rpc)
 
         # Runtime config
-        self.buy_amount = 0.05  # SOL
+        self.buy_amount = 0.001  # SOL
         self.slippage = 10      # bps
 
         # State
