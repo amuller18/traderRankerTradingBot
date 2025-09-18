@@ -48,7 +48,7 @@ class TelegramToDiscordBot:
         self.jupiter_limit = JupiterLimit(Config.SOLANA_TRADING_WALLET_PRIVATE_KEY, self.rpc)
 
         # Runtime config
-        self.buy_amount = 0.001  # SOL
+        self.buy_amount = 0.07  # SOL
         self.slippage = 10      # bps
 
         # State
@@ -146,8 +146,8 @@ class TelegramToDiscordBot:
 
         # Queue ladder after 10‑second delay
         async def _ladder_task():
-            await asyncio.sleep(10)
-            ladder_cfg = {2.0: 50, 3.0: 50}
+            await asyncio.sleep(10) # to allow txn to proccess
+            ladder_cfg = {5: 50, 10: 50}
             self.place_sell_ladder(ca, ladder_cfg, None)
 
         self._enqueue(1, _ladder_task)
@@ -226,6 +226,3 @@ class TelegramToDiscordBot:
         logging.info("Bot is running…")
         await self.client.run_until_disconnected()
 
-# ───────────────────────── Entrypoint ─────────────────────────
-if __name__ == "__main__":
-    asyncio.run(TelegramToDiscordBot().start_bot())
