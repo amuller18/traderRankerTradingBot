@@ -38,7 +38,7 @@ class PrioritizedItem:
 # ───────────────────── Telegram Bot Class ─────────────────────
 class TelegramToDiscordBot:
     def __init__(self):
-
+        
         # Telethon
         self.client = TelegramClient("user_session", Config.API_ID, Config.API_HASH)
 
