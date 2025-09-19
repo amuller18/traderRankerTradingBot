@@ -133,6 +133,7 @@ class JupiterSwap:
 
                     elif cs_enum in (target_enum, TCS.Finalized):
                         print(f"Transaction {cs_enum} (slot {entry.slot})")
+
                         return True
 
                     else:
@@ -250,8 +251,9 @@ class JupiterSwap:
             confirmed = self.confirm_txn(txn_sig)
             print("Transaction confirmed:", confirmed)
 
-            return confirmed
+            return confirmed, txn_sig
 
         except Exception as e:
             print(f"Failed to send transaction: {e}")
-            return False
+            txn_sig = None
+            return False, txn_sig

@@ -145,8 +145,7 @@ class JupiterLimit:
         print('Create order response:')
         print(response_data)
         
-        # FIXED: Get transaction from correct field name
-        tx_b64 = response_data.get("transaction")  # Changed from "tx" to "transaction"
+        tx_b64 = response_data.get("transaction") 
         if not tx_b64:
             print("Create-order failed: no transaction returned")
             return None
@@ -163,7 +162,6 @@ class JupiterLimit:
             )
             print("✅  Transaction signature:", tx_sig.value)
             
-            # FIXED: Always return the order ID, not None
             order_id = response_data.get("order")
             if order_id:
                 return order_id

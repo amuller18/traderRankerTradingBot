@@ -5,3 +5,5 @@ dotenv
 telethon
 solana==0.30.0
 asyncio
+boto3
+aiohttp

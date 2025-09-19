@@ -8,6 +8,8 @@ from decimal import Decimal, InvalidOperation
 from typing import Dict, Any, Callable, Awaitable, Tuple
 from asyncio import PriorityQueue
 from config import Config
+import boto3
+import solana_dex
 
 from telethon import TelegramClient, events
 from dataclasses import dataclass, field
@@ -62,6 +64,16 @@ class TelegramToDiscordBot:
         self._task_counter = 0
         self.worker_started = False
 
+        #DynamoDB setup
+        self.dynamodb = boto3.resource(
+            "dynamodb",
+            region_name=Config.AWS_REGION,
+            aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY
+        )
+        self.callsDB = self.dynamodb.Table("Calls")
+        self.tradesDB = self.dynamodb.Table("trades")
+
     # ─────────────── Discord helper ───────────────
     def send_to_discord(self, content: str) -> None:
         data = {"content": content}
@@ -106,6 +118,19 @@ class TelegramToDiscordBot:
             finally:
                 self.swap_queue.task_done()
 
+    # ─────────────── Database logging ───────────────
+    def log_trade_in_db(self) -> None:
+        self.callsDB.put_item(
+                    Item={'Username': username, 'CA': ca, 'Timestamp': unix_timestamp, }
+                )
+        logging.info("Trade logged in database")
+
+    def log_call_in_db(self, username, ca, unix_timestamp) -> None:
+        self.callsDB.put_item(
+            Item={'Username': username, 'CA': ca, 'Timestamp': unix_timestamp}
+        )
+        logging.info("Call logged in database")
+
     # ─────────────── Core trading operations ───────────────
     async def swap_tokens(self, ca: str) -> None:
         logging.info("Submitting swap for %s", ca)
@@ -127,7 +152,7 @@ class TelegramToDiscordBot:
         sol_mint = "So11111111111111111111111111111111111111112"
 
         try:
-            success = self.jupiter.swap(sol_mint, ca, lamports, self.slippage)
+            success, txn_sig = self.jupiter.swap(sol_mint, ca, lamports, self.slippage)
         except Exception as exc:
             logging.exception("self.jupiter.swap() raised: %s", exc)
             self.send_to_discord(f"Swap call errored for {ca}: {exc}")
@@ -139,8 +164,11 @@ class TelegramToDiscordBot:
             self.send_to_discord(msg)
             return
 
-        msg = f"✅ Swap successful for {ca}"
+        mc = solana_dex.SolanaDex.get_token_info(ca).get("market_cap", "N/A")
+
+        msg = f"✅ Swap successful for {ca} – txn {txn_sig} confirmed at {datetime.now().isoformat()} at {mc} MC"
         logging.info(msg)
+        self.log_trade_in_db()
         self.send_to_discord(msg)
 
         # Queue ladder after 10‑second delay
@@ -193,6 +221,7 @@ class TelegramToDiscordBot:
             return
         self.processed_message_ids.add(msg_id)
 
+        unix_timestamp = event.message.date
         sender = await event.get_sender()
         username = sender.username or "anonymous"
         self.call_counts.setdefault(username, 0)
@@ -204,6 +233,7 @@ class TelegramToDiscordBot:
             if self.check_valid_ca(ca):
                 logging.info("Valid CA %s queued", ca)
                 self._enqueue(0, self.swap_tokens, ca)
+                self.log_call_in_db(username, ca, unix_timestamp)
                 self.call_counts[username] += 1
             else:
                 logging.warning("Invalid CA %s", ca)
