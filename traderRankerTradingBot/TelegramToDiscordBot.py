@@ -72,6 +72,26 @@ class TelegramToDiscordBot:
         self.balance_check_interval = 30
         self.order_timeout = 300
 
+        # Market cap based ladder configurations
+        self.mc_ladder_configs = {
+            "ultra_aggressive": {  # < 100k MC
+                "multipliers": [1.5, 2, 3, 5, 8, 15, 25, 50, 100],
+                "percentages": [15, 20, 20, 15, 10, 8, 6, 4, 2]
+            },
+            "aggressive": {  # 100k - 1M MC
+                "multipliers": [2, 3, 5, 8, 15, 25, 50, 100],
+                "percentages": [20, 25, 20, 15, 10, 5, 3, 2]
+            },
+            "moderate": {  # 1M - 5M MC
+                "multipliers": [2, 3, 5, 8, 15, 25, 50],
+                "percentages": [25, 25, 20, 15, 10, 3, 2]
+            },
+            "conservative": {  # 5M+ MC
+                "multipliers": [2, 3, 5, 8, 15, 25],
+                "percentages": [30, 25, 20, 15, 7, 3]
+            }
+        }
+
         #DynamoDB setup
         self.dynamodb = boto3.resource(
             "dynamodb",
@@ -110,6 +130,44 @@ class TelegramToDiscordBot:
         except Exception as exc:
             logging.error("Error decoding base58 address %s: %s", ca, exc)
             return False
+
+    # ─────────────── Market Cap Ladder Methods ───────────────
+    def _get_mc_ladder_config(self, market_cap: int) -> Dict[float, float]:
+        """
+        Get ladder configuration based on market cap.
+        
+        Args:
+            market_cap: Market cap in USD
+            
+        Returns:
+            Dictionary with multipliers as keys and percentages as values
+        """
+        if market_cap < 100_000:  # < 100k - Ultra aggressive
+            config = self.mc_ladder_configs["ultra_aggressive"]
+        elif market_cap < 1_000_000:  # 100k - 1M - Aggressive
+            config = self.mc_ladder_configs["aggressive"]
+        elif market_cap < 5_000_000:  # 1M - 5M - Moderate
+            config = self.mc_ladder_configs["moderate"]
+        else:  # 5M+ - Conservative
+            config = self.mc_ladder_configs["conservative"]
+        
+        # Convert to the format expected by the ladder system
+        ladder_cfg = {}
+        for mult, pct in zip(config["multipliers"], config["percentages"]):
+            ladder_cfg[mult] = pct
+            
+        return ladder_cfg
+
+    def _get_mc_category(self, market_cap: int) -> str:
+        """Get market cap category name for logging"""
+        if market_cap < 100_000:
+            return "Ultra Aggressive (<100k)"
+        elif market_cap < 1_000_000:
+            return "Aggressive (100k-1M)"
+        elif market_cap < 5_000_000:
+            return "Moderate (1M-5M)"
+        else:
+            return "Conservative (5M+)"
 
     # ─────────────── Queue helpers ───────────────
     def _enqueue(self, priority: int, coro: Callable[..., Awaitable[Any]], *args) -> None:
@@ -226,22 +284,51 @@ class TelegramToDiscordBot:
         logging.info(msg)
         self.send_to_discord(msg)
 
-        # ⚡ NON-BLOCKING: Just queue the monitoring task - NO WAITING!
-        ladder_cfg = {3: 33, 5: 20, 10: 15, 25: 10, 50: 10, 100: 10}
-        expected_balance = int(float(self.buy_amount) * LAMPORTS_PER_SOL)
-        
-        # Add to pending orders (instant operation)
-        self.pending_orders[ca] = {
-            'ladder_config': ladder_cfg,
-            'expected_balance': expected_balance,
-            'timestamp': datetime.now(),
-            'txn_sig': txn_sig
-        }
-        
-        # Queue the monitoring task (non-blocking)
-        self._enqueue(2, self._monitor_single_order, ca)  # Priority 2 = lower than swaps
-        
-        logging.info(f"Queued {ca} for order monitoring")
+        # ⚡ NON-BLOCKING: Dynamic ladder based on market cap
+        try:
+            # Get market cap and determine ladder strategy
+            mc_int = int(mc) if isinstance(mc, (int, float)) and mc != "N/A" else 0
+            ladder_cfg = self._get_mc_ladder_config(mc_int)
+            mc_category = self._get_mc_category(mc_int)
+            
+            expected_balance = int(float(self.buy_amount) * LAMPORTS_PER_SOL)
+            
+            # Add to pending orders (instant operation)
+            self.pending_orders[ca] = {
+                'ladder_config': ladder_cfg,
+                'expected_balance': expected_balance,
+                'timestamp': datetime.now(),
+                'txn_sig': txn_sig,
+                'market_cap': mc_int,
+                'mc_category': mc_category
+            }
+            
+            # Queue the monitoring task (non-blocking)
+            self._enqueue(2, self._monitor_single_order, ca)  # Priority 2 = lower than swaps
+            
+            # Send strategy notification
+            strategy_msg = f"📊 **Strategy for {ca}**: {mc_category} (${mc_int:,} MC)\n" \
+                          f"🎯 **Targets**: {', '.join([f'{pct}% @ {mult}x' for mult, pct in ladder_cfg.items()])}"
+            self.send_to_discord(strategy_msg)
+            
+            logging.info(f"Queued {ca} for {mc_category} order monitoring")
+            
+        except Exception as e:
+            logging.error(f"Error setting up dynamic ladder for {ca}: {e}")
+            # Fallback to conservative ladder
+            fallback_cfg = self.mc_ladder_configs["conservative"]
+            ladder_cfg = {mult: pct for mult, pct in zip(fallback_cfg["multipliers"], fallback_cfg["percentages"])}
+            
+            expected_balance = int(float(self.buy_amount) * LAMPORTS_PER_SOL)
+            self.pending_orders[ca] = {
+                'ladder_config': ladder_cfg,
+                'expected_balance': expected_balance,
+                'timestamp': datetime.now(),
+                'txn_sig': txn_sig,
+                'market_cap': 0,
+                'mc_category': "Fallback"
+            }
+            self._enqueue(2, self._monitor_single_order, ca)
 
     # ─────────────── Ladder creation (DEPRECATED - Use _place_sell_ladder_with_retry) ───────────────
     def place_sell_ladder(
@@ -374,9 +461,14 @@ class TelegramToDiscordBot:
                 else:
                     failed_orders.append(f"{pct}% @ ×{mult}")
             
-            # Send status update
+            # Send status update with market cap context
             if successful_orders:
-                success_msg = f"📈 Limit orders created for {ca}:\n" + "\n".join(successful_orders)
+                # Get market cap category from pending orders if available
+                mc_category = "Unknown"
+                if ca in self.pending_orders:
+                    mc_category = self.pending_orders[ca].get('mc_category', 'Unknown')
+                
+                success_msg = f"📈 **{mc_category}** Limit orders created for {ca}:\n" + "\n".join(successful_orders)
                 self.send_to_discord(success_msg)
                 
             if failed_orders:
@@ -473,4 +565,3 @@ class TelegramToDiscordBot:
 
         logging.info("Bot is running…")
         await self.client.run_until_disconnected()
-
