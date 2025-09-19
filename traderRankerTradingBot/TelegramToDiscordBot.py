@@ -5,7 +5,7 @@ import requests
 import asyncio
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
-from typing import Dict, Any, Callable, Awaitable, Tuple
+from typing import Dict, Any, Callable, Awaitable, Tuple, Optional
 from asyncio import PriorityQueue
 from config import Config
 import boto3
@@ -63,6 +63,14 @@ class TelegramToDiscordBot:
         self.swap_queue: PriorityQueue[PrioritizedItem] = PriorityQueue()
         self._task_counter = 0
         self.worker_started = False
+
+        # Limit order monitoring attributes
+        self.pending_orders: Dict[str, Dict] = {}
+        self.order_retry_counts: Dict[str, int] = {}
+        self.max_retries = 5
+        self.critical_retry_threshold = 3
+        self.balance_check_interval = 30
+        self.order_timeout = 300
 
         #DynamoDB setup
         self.dynamodb = boto3.resource(
@@ -174,21 +182,34 @@ class TelegramToDiscordBot:
         logging.info(msg)
         self.send_to_discord(msg)
 
-        # Queue ladder after 10‑second delay
-        async def _ladder_task():
-            await asyncio.sleep(10) # to allow txn to proccess
-            ladder_cfg = {3: 33, 5: 20, 10: 15, 25: 10, 50: 10, 100:10}
-            self.place_sell_ladder(ca, ladder_cfg, None)
+        # ⚡ NON-BLOCKING: Just queue the monitoring task - NO WAITING!
+        ladder_cfg = {3: 33, 5: 20, 10: 15, 25: 10, 50: 10, 100: 10}
+        expected_balance = int(float(self.buy_amount) * LAMPORTS_PER_SOL)
+        
+        # Add to pending orders (instant operation)
+        self.pending_orders[ca] = {
+            'ladder_config': ladder_cfg,
+            'expected_balance': expected_balance,
+            'timestamp': datetime.now(),
+            'txn_sig': txn_sig
+        }
+        
+        # Queue the monitoring task (non-blocking)
+        self._enqueue(2, self._monitor_single_order, ca)  # Priority 2 = lower than swaps
+        
+        logging.info(f"Queued {ca} for order monitoring")
 
-        self._enqueue(1, _ladder_task)
-
-    # ─────────────── Ladder creation ───────────────
+    # ─────────────── Ladder creation (DEPRECATED - Use _place_sell_ladder_with_retry) ───────────────
     def place_sell_ladder(
         self,
         ca: str,
         ladder: Dict[float, float],
         expiry_sec: int | None = 7 * 24 * 3600,
     ) -> None:
+        """
+        DEPRECATED: This method is kept for backward compatibility.
+        Use _place_sell_ladder_with_retry for new implementations.
+        """
         bal = self.jupiter.get_token_balance_lamports(ca)
         if not bal:
             logging.warning("No balance for %s, ladder skipped", ca)
@@ -214,6 +235,157 @@ class TelegramToDiscordBot:
                 self.send_to_discord(msg)
             except Exception as err:
                 logging.error("Failed to create ladder: %s", err)
+
+    # ─────────────── New Limit Order Monitoring Methods ───────────────
+    async def _monitor_single_order(self, ca: str) -> None:
+        """Monitor a single order without blocking other operations"""
+        if ca not in self.pending_orders:
+            return
+            
+        order_info = self.pending_orders[ca]
+        start_time = datetime.now()
+        
+        while ca in self.pending_orders:
+            try:
+                # Check timeout
+                if (datetime.now() - start_time).seconds > self.order_timeout:
+                    logging.warning(f"Order timeout for {ca}, removing from pending")
+                    if ca in self.pending_orders:
+                        del self.pending_orders[ca]
+                    if ca in self.order_retry_counts:
+                        del self.order_retry_counts[ca]
+                    return
+                
+                # Check if tokens have arrived
+                current_balance = self.jupiter.get_token_balance_lamports(ca)
+                
+                if current_balance and current_balance > 0:
+                    logging.info(f"Tokens detected for {ca}, placing sell ladder")
+                    
+                    # Place the ladder (this runs in background)
+                    success = await self._place_sell_ladder_with_retry(
+                        ca, 
+                        order_info['ladder_config'], 
+                        order_info['expected_balance']
+                    )
+                    
+                    if success:
+                        # Remove from pending orders
+                        if ca in self.pending_orders:
+                            del self.pending_orders[ca]
+                        if ca in self.order_retry_counts:
+                            del self.order_retry_counts[ca]
+                        return
+                    else:
+                        # Increment retry count
+                        self.order_retry_counts[ca] = self.order_retry_counts.get(ca, 0) + 1
+                        
+                        if self.order_retry_counts[ca] >= self.critical_retry_threshold:
+                            await self._send_critical_alert(ca, "Limit order placement failed repeatedly")
+                            # Remove from pending to stop retrying
+                            if ca in self.pending_orders:
+                                del self.pending_orders[ca]
+                            return
+                
+                # Wait before next check (non-blocking sleep)
+                await asyncio.sleep(self.balance_check_interval)
+                
+            except Exception as e:
+                logging.error(f"Error monitoring order for {ca}: {e}")
+                # Remove from pending on error
+                if ca in self.pending_orders:
+                    del self.pending_orders[ca]
+                return
+
+    async def _place_sell_ladder_with_retry(self, ca: str, ladder_config: Dict[float, float], expected_balance: int) -> bool:
+        """Place sell ladder with retry logic - optimized for speed"""
+        try:
+            current_balance = self.jupiter.get_token_balance_lamports(ca)
+            if not current_balance or current_balance == 0:
+                logging.warning(f"No token balance for {ca}, skipping ladder")
+                return False
+            
+            balance_to_use = min(expected_balance, current_balance)
+            successful_orders = []
+            failed_orders = []
+            
+            # Process orders in parallel for speed
+            tasks = []
+            for mult, pct in sorted(ladder_config.items()):
+                making_amount = int(balance_to_use * (pct / 100))
+                if making_amount == 0:
+                    continue
+                tasks.append(self._create_single_order(ca, mult, pct, making_amount))
+            
+            # Wait for all orders to complete
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            for i, result in enumerate(results):
+                mult, pct = list(sorted(ladder_config.items()))[i]
+                if isinstance(result, Exception):
+                    failed_orders.append(f"{pct}% @ ×{mult}")
+                    logging.error(f"Order failed: {result}")
+                elif result:
+                    successful_orders.append(f"{pct}% @ ×{mult} → {result[:8]}…")
+                else:
+                    failed_orders.append(f"{pct}% @ ×{mult}")
+            
+            # Send status update
+            if successful_orders:
+                success_msg = f"📈 Limit orders created for {ca}:\n" + "\n".join(successful_orders)
+                self.send_to_discord(success_msg)
+                
+            if failed_orders:
+                retry_count = self.order_retry_counts.get(ca, 0)
+                if retry_count < self.max_retries:
+                    retry_msg = f"⚠️ Some orders failed for {ca}, will retry: {', '.join(failed_orders)}"
+                    logging.warning(retry_msg)
+                    self.send_to_discord(retry_msg)
+                    return False
+                else:
+                    error_msg = f"🚨 CRITICAL: All limit orders failed for {ca} after {retry_count} retries"
+                    logging.error(error_msg)
+                    self.send_to_discord(error_msg)
+                    return False
+                
+            return len(failed_orders) == 0
+            
+        except Exception as e:
+            logging.error(f"Error in ladder placement for {ca}: {e}")
+            return False
+
+    async def _create_single_order(self, ca: str, mult: float, pct: float, amount: int) -> Optional[str]:
+        """Create a single limit order - optimized for parallel execution"""
+        try:
+            # Get quote
+            quote = self.jupiter_limit.get_quote(
+                input_mint=ca,
+                output_mint=self.jupiter.SOL,
+                amount=str(amount),
+                slippage_bps=str(100),
+            )
+            
+            if not quote:
+                return None
+                
+            # Create order
+            order_id = self.jupiter_limit.create_limit_order(quote, mult)
+            return order_id
+            
+        except Exception as e:
+            logging.error(f"Failed to create order {pct}% @ ×{mult} for {ca}: {e}")
+            return None
+
+    async def _send_critical_alert(self, ca: str, message: str):
+        """Send critical alert to Discord"""
+        critical_msg = f"🚨 **CRITICAL ALERT** 🚨\n" \
+                      f"Token: {ca}\n" \
+                      f"Issue: {message}\n" \
+                      f"Time: {datetime.now().isoformat()}\n" \
+                      f"Retry Count: {self.order_retry_counts.get(ca, 0)}"
+        
+        self.send_to_discord(critical_msg)
+        logging.critical(critical_msg)
 
     # ─────────────── Telegram event handler ───────────────
     async def _on_message(self, event) -> None:

@@ -2,7 +2,7 @@ import base64
 import json
 import time
 import requests
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Tuple
 
 from solana.rpc.api import Client
 from solana.rpc.commitment import Processed
@@ -210,7 +210,7 @@ class JupiterSwap:
         return None
 
 
-    def swap(self, input_mint: str, output_mint: str, amount_lamports: int, slippage_bps: int) -> bool:
+    def swap(self, input_mint: str, output_mint: str, amount_lamports: int, slippage_bps: int) -> Tuple[bool, str]:
         """
         Execute token swap.
 
