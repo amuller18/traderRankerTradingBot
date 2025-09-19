@@ -108,9 +108,12 @@ class JupiterLimit:
     def _post(self, url: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Unified POST method for API calls"""
         headers = {"accept": "application/json", "content-type": "application/json"}
+        print(f"POST {url}")
+        print(f"Payload: {json.dumps(payload, indent=2)}")
         r = requests.post(url, json=payload, headers=headers, timeout=15)
         if r.status_code != 200:
             print(f"API Error {r.status_code} → {r.text}")
+            print(f"Response headers: {dict(r.headers)}")
             r.raise_for_status()
         return r.json()
 
@@ -138,7 +141,7 @@ class JupiterLimit:
             "requestId": f"{int(time.time())}_{self.pubkey[:8]}"
         }
                     
-        # Updated endpoint URL
+        # Updated endpoint URL - use lite-api as in working version
         print("Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder")
         response_data = self._post("https://lite-api.jup.ag/trigger/v1/createOrder", payload)
         

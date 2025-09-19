@@ -49,7 +49,7 @@ class TelegramToDiscordBot:
         self.jupiter_limit = JupiterLimit(Config.SOLANA_TRADING_WALLET_PRIVATE_KEY, self.rpc)
 
         # Runtime config
-        self.buy_amount = 0.024  # SOL
+        self.buy_amount = 0.0244  # SOL
         self.slippage = 1000      # bps
 
         # State
@@ -91,11 +91,16 @@ class TelegramToDiscordBot:
                 "percentages": [25, 25, 20, 15, 10, 3, 2]
             },
             "conservative": {  # 5M+ MC
-                "multipliers": [2, 3, 5, 8, 15, 25],
-                "percentages": [30, 25, 20, 15, 7, 3]
+                "multipliers": [5, 10, 15],
+                "percentages": [50, 20, 20]
+                
             }
         }
-
+        '''
+            test
+            "conservative": {  # 5M+ MC
+                "multipliers": [2, 3, 5, 8, 15, 25],
+                "percentages": [30, 25, 20, 15, 7, 3]'''
         #DynamoDB setup
         self.dynamodb = boto3.resource(
             "dynamodb",
@@ -255,17 +260,17 @@ class TelegramToDiscordBot:
         if hasattr(username, 'username') and username.username:
             username_str = username.username
         elif hasattr(username, 'title'):
-            username_str = username.title
+            username_str = username.title()  # Call the method
         else:
             username_str = str(username)
             
         try:
             self.tradesDB.put_item(
                 Item={
-                    'Username': username_str, 
-                    'CA': ca, 
-                    'Timestamp': timestamp, 
-                    'MC': mc
+                    'Username': str(username_str), 
+                    'CA': str(ca), 
+                    'Timestamp': str(timestamp), 
+                    'MC': str(mc)
                 }
             )
             logging.info("Trade logged in database")
@@ -283,16 +288,16 @@ class TelegramToDiscordBot:
         if hasattr(username, 'username') and username.username:
             username_str = username.username
         elif hasattr(username, 'title'):
-            username_str = username.title
+            username_str = username.title()  # Call the method
         else:
             username_str = str(username)
             
         try:
             self.callsDB.put_item(
                 Item={
-                    'Username': username_str, 
-                    'CA': ca, 
-                    'Timestamp': timestamp
+                    'Username': str(username_str), 
+                    'CA': str(ca), 
+                    'Timestamp': str(timestamp)
                 }
             )
             logging.info("Call logged in database")
@@ -335,7 +340,13 @@ class TelegramToDiscordBot:
         mc = solana_dex.SolanaDex.get_token_info(ca).get("market_cap", "N/A")
         unix_timestamp = event.message.date
         sender = await event.get_sender()
-        username = sender.username or "anonymous"
+        # Fix: Extract username string properly
+        if hasattr(sender, 'username') and sender.username:
+            username = sender.username
+        elif hasattr(sender, 'title'):
+            username = sender.title
+        else:
+            username = "anonymous"
         self.log_trade_in_db(username, ca, unix_timestamp, mc)
 
         msg = f"✅ Swap successful for {ca} – txn {txn_sig} confirmed at {datetime.now().isoformat()} at {mc} MC"
@@ -369,6 +380,9 @@ class TelegramToDiscordBot:
             strategy_msg = f"📊 **Strategy for {ca}**: {mc_category} (${mc_int:,} MC)\n" \
                           f"🎯 **Targets**: {', '.join([f'{pct}% @ {mult}x' for mult, pct in ladder_cfg.items()])}"
             self.send_to_discord(strategy_msg)
+            
+            # Debug: Log the ladder configuration
+            logging.info(f"Ladder config for {ca}: {ladder_cfg}")
             
             logging.info(f"Queued {ca} for {mc_category} order monitoring")
             
@@ -495,7 +509,8 @@ class TelegramToDiscordBot:
                 logging.warning(f"No token balance for {ca}, skipping ladder")
                 return False
             
-            balance_to_use = min(expected_balance, current_balance)
+            # Use the actual token balance, not the SOL amount
+            balance_to_use = current_balance
             successful_orders = []
             failed_orders = []
             
@@ -505,6 +520,7 @@ class TelegramToDiscordBot:
                 making_amount = int(balance_to_use * (pct / 100))
                 if making_amount == 0:
                     continue
+                logging.info(f"Creating order: {pct}% @ {mult}x for {ca} with amount {making_amount} (balance: {balance_to_use})")
                 tasks.append(self._create_single_order(ca, mult, pct, making_amount))
             
             # Wait for all orders to complete
@@ -593,10 +609,21 @@ class TelegramToDiscordBot:
 
         unix_timestamp = event.message.date
         sender = await event.get_sender()
-        username = sender.username or "anonymous"
+        # Fix: Extract username string properly
+        if hasattr(sender, 'username') and sender.username:
+            username = sender.username
+        elif hasattr(sender, 'title'):
+            username = sender.title
+        else:
+            username = "anonymous"
 
         solana_pattern = r"[A-HJ-NP-Za-km-z1-9]{32,44}"
+        processed_cas = set()  # Track processed CAs in this message
         for ca in re.findall(solana_pattern, event.raw_text):
+            if ca in processed_cas:
+                continue  # Skip duplicate CAs in same message
+            processed_cas.add(ca)
+            
             if self.check_valid_ca(ca):
                 # Check if this token can be called globally
                 can_call, reason = self.can_call_token(ca)
