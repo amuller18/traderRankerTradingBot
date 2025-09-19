@@ -119,9 +119,9 @@ class TelegramToDiscordBot:
                 self.swap_queue.task_done()
 
     # ─────────────── Database logging ───────────────
-    def log_trade_in_db(self) -> None:
-        self.callsDB.put_item(
-                    Item={'Username': username, 'CA': ca, 'Timestamp': unix_timestamp, }
+    def log_trade_in_db(self, username, ca, unix_timestamp, mc) -> None:
+        self.tradesDB.put_item(
+                    Item={'Username': username, 'CA': ca, 'Timestamp': unix_timestamp, 'MC': mc}
                 )
         logging.info("Trade logged in database")
 
@@ -132,7 +132,7 @@ class TelegramToDiscordBot:
         logging.info("Call logged in database")
 
     # ─────────────── Core trading operations ───────────────
-    async def swap_tokens(self, ca: str) -> None:
+    async def swap_tokens(self, ca: str, event) -> None:
         logging.info("Submitting swap for %s", ca)
         try:
             buy_amount_sol = Decimal(str(self.buy_amount))
@@ -165,10 +165,13 @@ class TelegramToDiscordBot:
             return
 
         mc = solana_dex.SolanaDex.get_token_info(ca).get("market_cap", "N/A")
+        unix_timestamp = event.message.date
+        username = await event.get_sender()
+        self.log_trade_in_db(username, ca, unix_timestamp, mc)
 
         msg = f"✅ Swap successful for {ca} – txn {txn_sig} confirmed at {datetime.now().isoformat()} at {mc} MC"
+        
         logging.info(msg)
-        self.log_trade_in_db()
         self.send_to_discord(msg)
 
         # Queue ladder after 10‑second delay
@@ -232,7 +235,7 @@ class TelegramToDiscordBot:
         for ca in re.findall(solana_pattern, event.raw_text):
             if self.check_valid_ca(ca):
                 logging.info("Valid CA %s queued", ca)
-                self._enqueue(0, self.swap_tokens, ca)
+                self._enqueue(0, self.swap_tokens, ca, event)
                 self.log_call_in_db(username, ca, unix_timestamp)
                 self.call_counts[username] += 1
             else:
