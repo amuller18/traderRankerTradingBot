@@ -49,7 +49,7 @@ class TelegramToDiscordBot:
         self.jupiter_limit = JupiterLimit(Config.SOLANA_TRADING_WALLET_PRIVATE_KEY, self.rpc)
 
         # Runtime config
-        self.buy_amount = 0.0245  # SOL
+        self.buy_amount = 0.001  # SOL
         self.slippage = 1000      # bps
 
         # State
@@ -128,16 +128,59 @@ class TelegramToDiscordBot:
 
     # ─────────────── Database logging ───────────────
     def log_trade_in_db(self, username, ca, unix_timestamp, mc) -> None:
-        self.tradesDB.put_item(
-                    Item={'Username': username, 'CA': ca, 'Timestamp': unix_timestamp, 'MC': mc}
-                )
-        logging.info("Trade logged in database")
+        # Convert datetime to timestamp if needed
+        if hasattr(unix_timestamp, 'timestamp'):
+            timestamp = int(unix_timestamp.timestamp())
+        else:
+            timestamp = unix_timestamp
+            
+        # Extract username string if it's a Channel object
+        if hasattr(username, 'username') and username.username:
+            username_str = username.username
+        elif hasattr(username, 'title'):
+            username_str = username.title
+        else:
+            username_str = str(username)
+            
+        try:
+            self.tradesDB.put_item(
+                Item={
+                    'Username': username_str, 
+                    'CA': ca, 
+                    'Timestamp': timestamp, 
+                    'MC': mc
+                }
+            )
+            logging.info("Trade logged in database")
+        except Exception as e:
+            logging.error(f"Failed to log trade to database: {e}")
 
     def log_call_in_db(self, username, ca, unix_timestamp) -> None:
-        self.callsDB.put_item(
-            Item={'Username': username, 'CA': ca, 'Timestamp': unix_timestamp}
-        )
-        logging.info("Call logged in database")
+        # Convert datetime to timestamp if needed
+        if hasattr(unix_timestamp, 'timestamp'):
+            timestamp = int(unix_timestamp.timestamp())
+        else:
+            timestamp = unix_timestamp
+            
+        # Extract username string if it's a Channel object
+        if hasattr(username, 'username') and username.username:
+            username_str = username.username
+        elif hasattr(username, 'title'):
+            username_str = username.title
+        else:
+            username_str = str(username)
+            
+        try:
+            self.callsDB.put_item(
+                Item={
+                    'Username': username_str, 
+                    'CA': ca, 
+                    'Timestamp': timestamp
+                }
+            )
+            logging.info("Call logged in database")
+        except Exception as e:
+            logging.error(f"Failed to log call to database: {e}")
 
     # ─────────────── Core trading operations ───────────────
     async def swap_tokens(self, ca: str, event) -> None:
@@ -174,7 +217,8 @@ class TelegramToDiscordBot:
 
         mc = solana_dex.SolanaDex.get_token_info(ca).get("market_cap", "N/A")
         unix_timestamp = event.message.date
-        username = await event.get_sender()
+        sender = await event.get_sender()
+        username = sender.username or "anonymous"
         self.log_trade_in_db(username, ca, unix_timestamp, mc)
 
         msg = f"✅ Swap successful for {ca} – txn {txn_sig} confirmed at {datetime.now().isoformat()} at {mc} MC"
