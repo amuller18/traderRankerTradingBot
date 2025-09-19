@@ -49,15 +49,19 @@ class TelegramToDiscordBot:
         self.jupiter_limit = JupiterLimit(Config.SOLANA_TRADING_WALLET_PRIVATE_KEY, self.rpc)
 
         # Runtime config
-        self.buy_amount = 0.001  # SOL
+        self.buy_amount = 0.024  # SOL
         self.slippage = 1000      # bps
 
         # State
         self.portfolio_value = 0
         self.csv_file = ".portfolio_value.csv"
         self.processed_message_ids = set()
-        self.call_counts: Dict[str, int] = {}
-        self.last_reset_time = datetime.now()
+        
+        # Global portfolio-wide call limiting system
+        self.token_call_counts: Dict[str, int] = {}  # Global call counts per token
+        self.weekly_reset_time = datetime.now()
+        self.max_calls_per_token_weekly = 3  # Global limit per token per week
+        self.reset_interval_days = 7  # Weekly reset
 
         # Task queue
         self.swap_queue: PriorityQueue[PrioritizedItem] = PriorityQueue()
@@ -114,10 +118,65 @@ class TelegramToDiscordBot:
 
     # ─────────────── Util helpers ───────────────
     def reset_call_counts(self) -> None:
-        if datetime.now() - self.last_reset_time >= timedelta(days=1):
-            self.call_counts.clear()
-            self.last_reset_time = datetime.now()
-            logging.info("Daily call counts reset")
+        """Reset global token call counts weekly"""
+        now = datetime.now()
+        
+        # Weekly reset for global token call counts
+        if now - self.weekly_reset_time >= timedelta(days=self.reset_interval_days):
+            self.token_call_counts.clear()
+            self.weekly_reset_time = now
+            logging.info("Weekly global token call counts reset")
+            
+            # Send reset notification to Discord
+            reset_msg = f"🔄 **Weekly Reset Complete**\n" \
+                       f"All token call limits have been reset.\n" \
+                       f"Portfolio is ready for new token calls."
+            self.send_to_discord(reset_msg)
+
+    def can_call_token(self, token_ca: str) -> Tuple[bool, str]:
+        """
+        Check if a token can be called based on global portfolio limits.
+        
+        Args:
+            token_ca: Token contract address
+            
+        Returns:
+            Tuple of (can_call: bool, reason: str)
+        """
+        # Check global per-token call limit
+        token_calls = self.token_call_counts.get(token_ca, 0)
+        if token_calls >= self.max_calls_per_token_weekly:
+            return False, f"Token call limit reached ({self.max_calls_per_token_weekly} calls this week)"
+        
+        return True, "OK"
+
+    def increment_token_call_count(self, token_ca: str) -> None:
+        """Increment global token call count"""
+        self.token_call_counts[token_ca] = self.token_call_counts.get(token_ca, 0) + 1
+        logging.info(f"Token call count updated for {token_ca[:8]}: {self.token_call_counts[token_ca]}/{self.max_calls_per_token_weekly}")
+
+    def get_token_call_stats(self, token_ca: str) -> Dict[str, Any]:
+        """Get call statistics for a token"""
+        token_calls = self.token_call_counts.get(token_ca, 0)
+        
+        return {
+            "token_calls": token_calls,
+            "token_limit": self.max_calls_per_token_weekly,
+            "remaining_calls": self.max_calls_per_token_weekly - token_calls,
+            "next_reset": self.weekly_reset_time + timedelta(days=self.reset_interval_days)
+        }
+
+    def get_portfolio_stats(self) -> Dict[str, Any]:
+        """Get overall portfolio call statistics"""
+        total_tokens = len(self.token_call_counts)
+        total_calls = sum(self.token_call_counts.values())
+        
+        return {
+            "total_tokens_called": total_tokens,
+            "total_calls": total_calls,
+            "next_reset": self.weekly_reset_time + timedelta(days=self.reset_interval_days),
+            "token_breakdown": dict(self.token_call_counts)
+        }
 
     def _sol_balance(self) -> float:
         lamports = self.jupiter.client.get_balance(self.jupiter.pubkey).value
@@ -535,17 +594,31 @@ class TelegramToDiscordBot:
         unix_timestamp = event.message.date
         sender = await event.get_sender()
         username = sender.username or "anonymous"
-        self.call_counts.setdefault(username, 0)
-        if self.call_counts[username] >= 3:
-            return
 
         solana_pattern = r"[A-HJ-NP-Za-km-z1-9]{32,44}"
         for ca in re.findall(solana_pattern, event.raw_text):
             if self.check_valid_ca(ca):
-                logging.info("Valid CA %s queued", ca)
+                # Check if this token can be called globally
+                can_call, reason = self.can_call_token(ca)
+                
+                if not can_call:
+                    logging.warning(f"Token call blocked for {ca[:8]}: {reason}")
+                    # Send limit notification to Discord
+                    remaining_time = self.weekly_reset_time + timedelta(days=self.reset_interval_days) - datetime.now()
+                    days_left = remaining_time.days
+                    hours_left = remaining_time.seconds // 3600
+                    
+                    limit_msg = f"🚫 **Token Call Limit Reached**\n" \
+                               f"Token: {ca[:8]}...\n" \
+                               f"Reason: {reason}\n" \
+                               f"⏰ Reset in: {days_left}d {hours_left}h"
+                    self.send_to_discord(limit_msg)
+                    continue
+                
+                logging.info("Valid CA %s queued (Global calls: %d/%d)", ca, self.token_call_counts.get(ca, 0) + 1, self.max_calls_per_token_weekly)
                 self._enqueue(0, self.swap_tokens, ca, event)
                 self.log_call_in_db(username, ca, unix_timestamp)
-                self.call_counts[username] += 1
+                self.increment_token_call_count(ca)
             else:
                 logging.warning("Invalid CA %s", ca)
 
