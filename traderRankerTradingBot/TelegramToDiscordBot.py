@@ -3,7 +3,6 @@ import re
 import base58
 import requests
 import asyncio
-import time
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from typing import Dict, Any, Callable, Awaitable, Tuple
@@ -20,7 +19,7 @@ LAMPORTS_PER_SOL = 1_000_000_000
 # ───────────────────────── Logging ────────────────────────────
 logging.basicConfig(
     filename="bot.log",
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
     filemode='w'
 )
@@ -147,7 +146,7 @@ class TelegramToDiscordBot:
         # Queue ladder after 10‑second delay
         async def _ladder_task():
             await asyncio.sleep(10) # to allow txn to proccess
-            ladder_cfg = {5: 50, 10: 50}
+            ladder_cfg = {3: 33, 5: 20, 10: 15, 25: 10, 50: 10, 100:10}
             self.place_sell_ladder(ca, ladder_cfg, None)
 
         self._enqueue(1, _ladder_task)
