@@ -149,7 +149,6 @@ class JupiterSwap:
     def get_quote(
         self, input_mint: str, output_mint: str, amount: str, slippage_bps: str
     ) -> dict: 
-        slippage_bps = 200
         print('getting quote')
         url = f'https://quote-api.jup.ag/v6/quote?inputMint={str(input_mint)}&outputMint={str(output_mint)}&amount={str(amount)}&slippageBps={str(slippage_bps)}'
         print(url)
