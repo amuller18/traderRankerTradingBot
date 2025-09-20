@@ -91,8 +91,8 @@ class TelegramToDiscordBot:
                 "percentages": [25, 25, 20, 15, 10, 3, 2]
             },
             "conservative": {  # 5M+ MC
-                "multipliers": [5, 10, 15],
-                "percentages": [50, 20, 20]
+                "multipliers": [2, 5, 10],
+                "percentages": [50, 33, 27]
                 
             }
         }
