@@ -1,0 +1,481 @@
+Python 3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)] on win32
+Enter "help" below or click "Help" above for more information.
+
+= RESTART: C:\Users\root\Documents\GitHub\traderRankerTradingBot\traderRankerTradingBot\main.py
+Traceback (most recent call last):
+  File "C:\Users\root\Documents\GitHub\traderRankerTradingBot\traderRankerTradingBot\main.py", line 2, in <module>
+    from TelegramToDiscordBot import TelegramToDiscordBot
+  File "C:\Users\root\Documents\GitHub\traderRankerTradingBot\traderRankerTradingBot\TelegramToDiscordBot.py", line 11, in <module>
+    import boto3
+ModuleNotFoundError: No module named 'boto3'
+
+= RESTART: C:\Users\root\Documents\GitHub\traderRankerTradingBot\traderRankerTradingBot\main.py
+Welcome to the telegram copy trader...
+running bot
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&amount=24400000&slippageBps=1000
+Swap transaction: {
+    "swapTransaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAGC6oOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPq4mTK/ShUPGngaQe6i5t8m+Jw5J/QLqNkS4nK+TPIfa9QRe5ZGOuprDbyDGh4HnYHacr2qjLLmyH7CUkqIrVpV1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAABHnVW/IxwG7udMVuzmgVB/2xst6j9I5RArHNola8E48G3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqYyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZtD/6J/XX9kp0wJsfKVh53ksJqzbfyd1RSzIap7OM5egNoLvTzO/jFbwIf9bak6/aAyAaCCfxGvjQ92Y/6mAeVQYGAAUCwFwVAAUCAAEMAgAAAIBQdAEAAAAACAEBAREJBgAEABYFCAEBByIIAAEEBxYHCgcRCwAUFhAEAQwNFQMICAUJGBEPFw4CExIAI+UXy5d6460qAQAAAGNkAAGAUHQBAAAAAHHq2dcHAAAA6AMACAMBAAABCQFTh7PfXBLom6HQvqPLlW9WydgI8gjkimIP0qm1xA0VLgUBCAwEBgkNCw4CChIJEA8=",
+    "lastValidBlockHeight": 346210315,
+    "prioritizationFeeLamports": 0,
+    "computeUnitLimit": 1400000,
+    "prioritizationType": {
+        "computeBudget": {
+            "microLamports": 0,
+            "estimatedMicroLamports": 0
+        }
+    },
+    "simulationSlot": null,
+    "dynamicSlippageReport": null,
+    "simulationError": null,
+    "addressesByLookupTableAddress": null
+} 
+
+Transaction Signature: 4zJ3wtfV9GfuW3uo6oDzkmKYvcvMY9XbXS36tP51msUhk3wTUGxfkq2Nr8sh49Sudzv3SMxDphWs6wQNDEUg1JK1
+Confirming transaction...
+Awaiting status… try 1/30
+Awaiting status… try 2/30
+Awaiting status… try 3/30
+Transaction TransactionConfirmationStatus.Confirmed (slot 368038425)
+Transaction confirmed: True
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=6664763918&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "6664763918",
+    "takingAmount": "9194650"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381114_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 2.2005147905398454388","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:11:55 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdad98cedd31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'f075a4d9-9abf-47cd-82da-9aea43285737', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 8ac7fa4552a03e96ce77af7298a83b50.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'obO83SmrBNvq4GiywUWjQSjoh0RdsbEngVqpLvc0_DgjSg6mxpEmAg==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=8330954898&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "8330954898",
+    "takingAmount": "17255148"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381115_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 4.1295980148188384489","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:11:56 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdadeaf03d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '4b59f78a-4d97-45fd-9fc4-d5ea0b902b0f', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 2e7a2342011372c715a1c654a72f35d0.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': '0WMY0-Uxox12lKXLvQ8ZB4zl1DJ0F2O5Gb33eZyr0IMs3-idKeim1w==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=6664763918&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "6664763918",
+    "takingAmount": "23007100"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381116_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': 'c8255013-f3d2-4d54-94ee-4555aeb89e26', 'order': 'G1VZUoFJNtW94NssRP2RFuq5D9uMjYt4pXLdmdgREPJG', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPre/5jGTjqKJR2WvsAz4niuEO2MTPF4T7Z0YAzDJNv+6RZ6F3zmdkVSExqXyjEKBhBtphdrTlVy3nmxYAovM71f1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuHI/uZ1kA8sY2vX9PCJL6TAyCnqspS+A2buzWtePVY8ygQFAAkDn/cAAAAAAAAFAAUCLscBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1nx60yqN7dhWtDjpAjQEAAAB8D18BAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 5uvEB5Li1e8r5uiTxPSZzfwPscALH7sKfVWL3F9HqwRzp5nv3UmxfthtRmgFSuqm3ckV1iuqwSpiDwfJDjVb4Ymc
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=4998572938&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "4998572938",
+    "takingAmount": "27688328"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381118_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': '465f398f-f8a5-42d8-97e5-4ad58d51f352', 'order': 'H6XUnXKeeu5Z9G77K73h5c1jnUdAj3BHUafd6wLcnB7b', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPrvJVuOLgg1QnXWQsllipFkNFVZCsHSjpSYfCgfyyhj/g3ACCI/dO+aXqRpWfpMbaxwhdoZJmcMvSS+xzLzttxm1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuEZQQKqor70DfLEHpce0zdaKIYQGvYNLEjGh8rSgYG2zQQFAAkDn/cAAAAAAAAFAAUC5ocBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1nypWUH/3nrUGiivwKQEAAACIfaYBAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 5PmGtpMxZK8QrRST6u7ATSym1mRx2CFwto61yzMRdgjoX4vrCA2Lq9igMvw88f3BfJF5kCGXu7sS7HJtdo7A9D2N
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=3332381959&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "3332381959",
+    "takingAmount": "34610775"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381119_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': '197f3fc7-de3b-4ea5-a912-7504e51746e7', 'order': 'Ek23Ngxb6NPiGa36TEvvphPGFhjiyhU28qC2zuUFsUHM', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPrMLRTx6OxVmCOnrY7NSK7niLexCgHLo9imlkaFxjrDkESMV0hLqL9sRd/t+QD9P+Z5GmQv9ZEpgChpcTcvAKAJ1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuHh/6qgGBfcxbp+7h3Q2zo8HFJ5iMrcW6JwSmyXtNm/IAQFAAkDn/cAAAAAAAAFAAUCylYBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1nzpEikqKzk1pBx2gxgAAAABXHhACAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 3HCssqnH7fqWCDfv2sipWKPNwfpL4UjrNMjiXWS1jCvFwYZrYz95AHC2ZTjzZJktjdWKexfiqL5LZfAELyAB5XLg
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=1666190979&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "1666190979",
+    "takingAmount": "28842575"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381120_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': 'ba937716-6c90-45ce-95a7-fbe81a6d26f9', 'order': '39CYjiPbhiNCLHcBZRNqpMADJmW6cRstFCnDpPWBpcMm', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPof0ROmw+4/uIs1DyP/BTQvg9BAb6T1H5ogeZZI6zdUuI8IBJ0Cswm9SEYL2+8n3LUaqTJE2YQrFB8rd1oahMic1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuEiFvfVNtZyZrcUfF2SnuhrCE0EwVJOz1NjhyHHTTlragQFAAkDn/cAAAAAAAAFAAUCqjoBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1n6OwGaUN9yeWgw5QYwAAAABPGrgBAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 2J9DFfSP8L9xmtAwfSvcDwNnTN9t88VskZFd7q1gmYX22UZQ6pq8JQgxtDgCMZsUPxDgyMq24X8XtJJk8nz6WB2k
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=999714587&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "999714587",
+    "takingAmount": "35214850"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381122_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': 'de30de18-60b1-46b5-ab2b-fffa0e92ea27', 'order': '7Ky3oy4YFxirACmDAmaryjNyQbnYqokYFLqQtPCvLEnW', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPpeAfNG0z6PgUWX/CuW8X9PqONtSv6zM2XYle0qsxesS3HMJP50ePqO88Z24Ng4MwyScZA1ZMJbej70pr9uEGhY1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuH7Y81CdJR4GptC4k/tHjHdeYyCEUq9u5ABN/cF4qQ8vwQFAAkDn/cAAAAAAAAFAAUCwk8BAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1n+DQ2e2j3l1IG2+WOwAAAAACVhkCAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 3sZcwXT3cqScbZ1jeA5ikwqkgot6ikrs2UK64oKsGQF76ts4nsTVf1jaexnxVV1YxM2fN2g6x4BjrdjVf4iSPmC2
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=666476391&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "666476391",
+    "takingAmount": "46953200"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381123_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': 'c2b7745e-0e4e-458e-953e-267b5d32f3b2', 'order': '4EaR1utj4CnfeRsnewGiidYmNBZEEcxCSmot226pp3jL', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPowDWSH+lsemArYWYYFlvswYcLrMfvfvBUL8+C0OtEbB8XwYMcdu36DS5gq3CHt3iBHNm9+8Bp+HQ6bJok1TUCM1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuF2ZZEt24xBpJdd90LGBfwU+u9qryXeet/yu0yzEhpVYwQFAAkDn/cAAAAAAAAFAAUCukgBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1n5qQ21eAxvLWZ5+5JwAAAADwcswCAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 2NFwN7sYi5aZVBogFRvZHqFAJz8NBuHTaKtZVB5V4SreZPM56yEUUTfevkxYTa42niakaSTonaSBpw76JxthBnC1
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=2999143764&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "2999143764",
+    "takingAmount": "4287852"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381156_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 1.0260398398484913377","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:37 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbdd092ad31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '48cb1cbb-c267-4624-a076-058541364fe1', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 2808d4518b8251e6457a363885208d94.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'ivYyEne9AB7z9k2DRg7RqOBERzER0hKuHngioRqk2iSB_S4_OSKHSw==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=3748929705&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "3748929705",
+    "takingAmount": "8039679"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381157_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 1.9238142906036120159","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:38 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbe3ca4d1457-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'f2859aaf-4731-483d-8a75-dc6aea377bdb', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 2e7a2342011372c715a1c654a72f35d0.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'EKOYvAospDiTfKNiHcwfLNfaKZ8SsczninOKQpdQfCjK28C8LZWKdA==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=2999143764&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "2999143764",
+    "takingAmount": "10745995"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381158_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 2.5714084788403817745","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:39 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbe98d95d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '3782820d-071d-406c-ba46-6e1fe8d9b46c', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 afa04b4abb14cb6c15ea2404467ef006.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'JBL1i_wnnt24hToBU5mRsuu62bxMrjF6QfznVxS0tF6vgAqd5526Nw==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=2249357823&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "2249357823",
+    "takingAmount": "12895256"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381159_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 3.0856436494262425512","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:40 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbee3f96d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '19880d53-8b19-4e4a-93d7-9897740b6e6d', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 a18fb610c8f4a98e516b218239df137a.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'YXX8YrrdXlcbnA7keGFBSjgLu88FHvsKsUDe2cGzeBtCpbZEnja-0g==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=1499571882&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "1499571882",
+    "takingAmount": "16119135"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381159_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 3.8570701153194846404","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:40 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbf359bed31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '217cef34-3314-4ad6-ad78-34b42bc26097', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 b1e21adc8bf8bbc6052f2756a937f9c6.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'M9P-SNz6g8pqkGmvrbgoOt8QM7YkPAGQ6aQ_Ra4W1uWMKOEyEi2ojQ==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=749785941&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "749785941",
+    "takingAmount": "13432650"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381160_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 3.2142340692938098325","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:41 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbf89d0d1457-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'bc1dbc3b-bc6d-4b2d-9d7d-ab727d063266', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 305967783177ae531dec373c0415a104.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': '9tiXQSMbhAlEnuzpIkDJfA3mNtzy2786CEd_aWWc6LR0NtU9Zl1i_w==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=449871564&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "449871564",
+    "takingAmount": "16119150"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381161_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 3.8570737045971803599","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:12:42 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdbfd5d44d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'f6cb387e-19ce-4920-8988-56297531326d', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 afa04b4abb14cb6c15ea2404467ef006.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'VsUr3DPYbIoHXK_1ZbvqxkTDrGPzsZ1zNSIF_j5Dx4owX6Xv2OUrhw==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=299914376&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "299914376",
+    "takingAmount": "21492200"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381162_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': '42066299-e58f-4867-9f56-b74e5abe8e16', 'order': 'EmkXSt2NwtmFnL6JoLi5fqK8L4LW7ZYaxmFnKUeWcaGC', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPrMnrMOpYVmSbp+/IRTCHBrw845/34AL7FgRhB4pPp6PZ0K38fRkN8RRDIvylF1Po1drP0G/UcWE+THjMvQGC0f1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuHgxgC6bNgp1q5N3AFwE0Oui4vvNjpBlVugtIPzLcprfAQFAAkDn/cAAAAAAAAFAAUCqjoBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1nxADc02T2FkAiFTgEQAAAADo8UcBAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 653dHYT8KFA2V9oC1E3v94e6er4SKgS1rAFrkKh42qGnAmq6CCaPEc2ANeKWc2TS8jc2GHbV5vczyN3ApFC2yZJ2
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=2939160888&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "2939160888",
+    "takingAmount": "4681804"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381195_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 1.1202776370908386441","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:16 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdcd01e7bd31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'ea5a7353-e74b-4345-9582-796e88a48640', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 99cc83a4562a22265b7388682ea098d6.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'scaSx2V1wIHdhBzYHqfcb_H-HDApYNUGTZhTVrctjOa9sJihmgXAoQ==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=3673951111&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "3673951111",
+    "takingAmount": "8752809"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381196_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 2.0944012573844241028","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:17 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdcd56869d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '23f3375c-ee79-4319-870b-af4aaad419dc', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 a18fb610c8f4a98e516b218239df137a.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': '_VntGsCS_IHjnJ39QHw93MTWrrT70s4idpEDyAMj0IZuCr_Xtz3-Wg==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=2939160888&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "2939160888",
+    "takingAmount": "11670465"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381196_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 2.7925476918622253766","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:17 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdcda8a2fd31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '226851fc-fba8-4874-9a33-482ff919bb65', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 b6b8894c87e20f3a5a66272033d7fc1a.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'cUJJ8XUx5Xj3G0DVsSTb-Cr4JvVie9H7KHKmcyekA1Y_BxOlqECGEg==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=2204370666&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "2204370666",
+    "takingAmount": "14004632"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381197_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 3.3510749372008622708","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:18 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdcdfac10d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '13557af2-823f-47a2-802e-fd44c0741071', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 cabe031a960a0cb4a9be82dade7eb11e.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': '7HcdFoiU7odH5Z-4CWlRkf6uGVXE1CB4zhA1Cvp2R4wraPQGGDAHAg==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=1469580444&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "1469580444",
+    "takingAmount": "17505855"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381198_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 4.188859224917327409","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '116', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:19 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdce50dfd1457-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': '7fe3779b-0318-495f-afab-900d3ed969c5', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 ba6fa23dc994dedca3d59c0358b6f2b6.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'tywBnmZ3tKiCO2iui6azr3r0UD8kcrhNxl2tDtYJvjFbDz56UwA7NA==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=734790222&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "734790222",
+    "takingAmount": "14588250"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381199_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 3.4907249938891988752","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:20 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdcea682ad31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'cae20e48-a1fe-4421-94e0-0c05a71b4333', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 3e3e9a4d4f586f1313accbac3bd53dae.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'NxXpakd_O-U52IbZOPGyQV07TPA_u_uS0t2l99QaV1lu0LNeqp9u_A==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=440874133&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "440874133",
+    "takingAmount": "17307900"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381200_CSppMvTh"
+}
+API Error 400 → {"error":"Invalid create order request: Order size must be at least 5 USD, received: 4.1414918939375775169","code":1}
+Response headers: {'Content-Type': 'application/json', 'Content-Length': '117', 'Connection': 'keep-alive', 'Date': 'Sat, 20 Sep 2025 08:13:21 GMT', 'Server': 'cloudflare', 'CF-RAY': '981fdcef39b9d31c-MCI', 'Access-Control-Allow-Origin': '*', 'x-request-id': 'cc77bef6-6217-48ef-9422-985caee65827', 'Vary': 'Accept-Encoding', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 4093d20d641782c8a61cba78cc905034.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'MCI50-P4', 'X-Amz-Cf-Id': 'b80x0B8e-Qp9c-dtQkBc0eZxeC-6Y2eRQPWb3KHZY2MYzje7m2n53w==', 'X-XSS-Protection': '1; mode=block', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Content-Type-Options': 'nosniff', 'Strict-Transport-Security': 'max-age=31536000'}
+getting quote
+https://quote-api.jup.ag/v6/quote?inputMint=CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump&outputMint=So11111111111111111111111111111111111111112&amount=293916088&slippageBps=100
+Creating limit order with payload to https://lite-api.jup.ag/trigger/v1/createOrder
+POST https://lite-api.jup.ag/trigger/v1/createOrder
+Payload: {
+  "inputMint": "CVS4NMq2AVSJEzi9ui8TCm3QrCTfDtRmKZh6cSdnpump",
+  "outputMint": "So11111111111111111111111111111111111111112",
+  "maker": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "payer": "CSppMvThXXhJUsdaVLinPhPyptZYBAwcmTGLCCWgx81Q",
+  "params": {
+    "makingAmount": "293916088",
+    "takingAmount": "23077200"
+  },
+  "computeUnitPrice": "auto",
+  "requestId": "1758381200_CSppMvTh"
+}
+Create order response:
+{'code': 0, 'requestId': '44cfa2bf-c049-4617-8e72-b2411c9db768', 'order': 'M9daUJWFp2JNSoZhhf7GCnUzuq2urcmT5FWbmm8Ev7J', 'transaction': 'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAJDqoOJI0cWeOHq6RMF6jc208j9WBRKXzK+9j6gAzHMFR7UxJx2RmKpPq22dbZSrkXWBziAgPTieuR5h8UIFP8GPoFKV/36CM4iAWYwTvt0mZabRYZCnuKWN66h7r0dwkB2Wg7RmB4fevvjyvA6IPN0IgLTXwdNHHQukVjeNokJwM/1uLHZoFr62S5RnHheMJ2+R6+W5eB422Mtr0nfYJlAwgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpCsNKlsFmcVpgwSM+yiWKDfMLHshY4HRcc2oSYmZjSyIQiYnNzGGPBnZ0rGd+KZqtsSj+INnM2CjlCMnxv5sw66q5Ju/kVq86CKVOxvaqDmcLEvEQSEcT9uXLDrBOl6nfkn9sh+xDEAWX2S7IDh4PwuUsi7/8dQ+DB2YEV+4zsuHW8hPVSXf1bQG80gk1lMKLmfcb587RNMVTuo5hF9FFjwQFAAkDjUUBAAAAAAAFAAUCskEBAAYGAAEABwgJAQEKDwAAAgMECwoMBwkJCAYNCi6FbkqvcJ/1n1UNF0KD48xFuM2EEQAAAABQIWABAAAAAAAAAQAAAQAAAAAAAAAAAA=='}
+✅  Transaction signature: 78zdX32Nj7UneMmxYT8rcS51Spc79yD1S4uJvVztJxfmmKttzcpAChUb7Gm2KWGCQ6Dw88JKnCUqo73jbGTHTdw
+Error in Telegram bot: Could not find a matching Constructor ID for the TLObject that was supposed to be read with ID 7482147e. See the FAQ for more details. Remaining bytes: b'~\x14\x82t@!\x140\x08\x00\x00\x00\x06\xee\xde\x84\x00\x00\x00\x00\xa1UN\xfc\xabj\r\xc3\x13Primaere\xe2\x80\x99s lounge\rprimaere_chat\x00\x00\x11\x1cn\x1c\x02\x00\x00\x00\xaf\xf71\x1bi\xa7\x89I\x15\x01\x08\x08dg\xcc\x99\xf2\xe5@\xc3\xf4\xed\x8e\x94QEM\xd8\xd2G\x00\x00\x02\x00\x00\x00\xb2\xc8\x9bh\x18\x04\x12\x9f\x80\x04\x06\x00\xff\xff\xff\x7f\x15\xc4\xb5\x1c\x00\x00\x00\x00>*l\xa5\xc5#\x00\x00\x00\x00\x00\x00\xecw\xceh\x82\x00\x00\x00\x0c\x00\x00\x00\x88\xa25\x867\xec0\xa4x\xc2p\x0e*\xb5\x07~'

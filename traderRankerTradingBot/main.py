@@ -6,6 +6,7 @@ import time
 
 # Function to run the Telegram bot with a new event loop in a separate thread
 def start_telegram_bot():
+
     # Create a new event loop for this thread
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)  # Set the loop for this thread

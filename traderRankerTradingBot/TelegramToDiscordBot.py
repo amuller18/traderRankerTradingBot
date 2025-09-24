@@ -49,7 +49,7 @@ class TelegramToDiscordBot:
         self.jupiter_limit = JupiterLimit(Config.SOLANA_TRADING_WALLET_PRIVATE_KEY, self.rpc)
 
         # Runtime config
-        self.buy_amount = 0.0244  # SOL
+        self.buy_amount = 0.05    # SOL
         self.slippage = 1000      # bps
 
         # State
@@ -78,24 +78,24 @@ class TelegramToDiscordBot:
 
         # Market cap based ladder configurations
         self.mc_ladder_configs = {
-            "ultra_aggressive": {  # < 100k MC
-                "multipliers": [1.5, 2, 3, 5, 8, 15, 25, 50, 100],
-                "percentages": [15, 20, 20, 15, 10, 8, 6, 4, 2]
+            "ultra_aggressive": {  # < 100k MC, $10 entries
+                "multipliers": [3, 5, 10, 12.5, 20, 25, 40, 50, 60, 80, 90, 100],
+                "percentages": [33, 15, 10, 5, 10, 5, 7, 5, 3, 4, 2, 1]
             },
-            "aggressive": {  # 100k - 1M MC
-                "multipliers": [2, 3, 5, 8, 15, 25, 50, 100],
-                "percentages": [20, 25, 20, 15, 10, 5, 3, 2]
+            "aggressive": {  # 100k - 1M MC, $20 entries
+                "multipliers": [3, 5, 10, 12.5, 20, 25, 40, 50, 60, 80, 90, 100],
+                "percentages": [30, 15, 12, 8, 10, 5, 6, 5, 3, 4, 1, 1]
             },
-            "moderate": {  # 1M - 5M MC
-                "multipliers": [2, 3, 5, 8, 15, 25, 50],
-                "percentages": [25, 25, 20, 15, 10, 3, 2]
+            "moderate": {  # 1M - 5M MC, $50 entries
+                "multipliers": [3, 5, 10, 15, 20, 25, 40, 50, 80, 100],
+                "percentages": [28, 15, 12, 10, 10, 8, 6, 5, 4, 2]
             },
-            "conservative": {  # 5M+ MC
-                "multipliers": [2, 5, 10],
-                "percentages": [50, 33, 27]
-                
+            "conservative": {  # 5M+ MC, $100+ entries
+                "multipliers": [3, 5, 10, 20, 50, 100],
+                "percentages": [25, 20, 18, 15, 12, 10]
             }
         }
+
         '''
             test
             "conservative": {  # 5M+ MC
@@ -653,7 +653,7 @@ class TelegramToDiscordBot:
     async def start_bot(self) -> None:
         print("running bot")
         await self.client.start()
-
+        self.send_to_discord("Bot stRted")
         channels = await asyncio.gather(
             *[self.client.get_entity(ch) for ch in Config.CHANNELS_TO_TRACK]
         )
