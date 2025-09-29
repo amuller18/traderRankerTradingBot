@@ -59,9 +59,7 @@ class TelegramToDiscordBot:
         
         # Global portfolio-wide call limiting system
         self.token_call_counts: Dict[str, int] = {}  # Global call counts per token
-        self.weekly_reset_time = datetime.now()
-        self.max_calls_per_token_weekly = 3  # Global limit per token per week
-        self.reset_interval_days = 7  # Weekly reset
+        self.max_calls_per_token = 2  # PERMANENT limit per token (no resets)
 
         # Task queue
         self.swap_queue: PriorityQueue[PrioritizedItem] = PriorityQueue()
@@ -122,21 +120,6 @@ class TelegramToDiscordBot:
             logging.error("Discord webhook exception: %s", exc)
 
     # ─────────────── Util helpers ───────────────
-    def reset_call_counts(self) -> None:
-        """Reset global token call counts weekly"""
-        now = datetime.now()
-        
-        # Weekly reset for global token call counts
-        if now - self.weekly_reset_time >= timedelta(days=self.reset_interval_days):
-            self.token_call_counts.clear()
-            self.weekly_reset_time = now
-            logging.info("Weekly global token call counts reset")
-            
-            # Send reset notification to Discord
-            reset_msg = f"🔄 **Weekly Reset Complete**\n" \
-                       f"All token call limits have been reset.\n" \
-                       f"Portfolio is ready for new token calls."
-            self.send_to_discord(reset_msg)
 
     def can_call_token(self, token_ca: str) -> Tuple[bool, str]:
         """
@@ -148,17 +131,17 @@ class TelegramToDiscordBot:
         Returns:
             Tuple of (can_call: bool, reason: str)
         """
-        # Check global per-token call limit
+        # Check global per-token call limit (PERMANENT - NO RESETS)
         token_calls = self.token_call_counts.get(token_ca, 0)
-        if token_calls >= self.max_calls_per_token_weekly:
-            return False, f"Token call limit reached ({self.max_calls_per_token_weekly} calls this week)"
+        if token_calls >= self.max_calls_per_token:
+            return False, f"Token call limit reached ({self.max_calls_per_token} calls total - PERMANENT LIMIT)"
         
         return True, "OK"
 
     def increment_token_call_count(self, token_ca: str) -> None:
         """Increment global token call count"""
         self.token_call_counts[token_ca] = self.token_call_counts.get(token_ca, 0) + 1
-        logging.info(f"Token call count updated for {token_ca[:8]}: {self.token_call_counts[token_ca]}/{self.max_calls_per_token_weekly}")
+        logging.info(f"Token call count updated for {token_ca[:8]}: {self.token_call_counts[token_ca]}/{self.max_calls_per_token}")
 
     def get_token_call_stats(self, token_ca: str) -> Dict[str, Any]:
         """Get call statistics for a token"""
@@ -166,9 +149,9 @@ class TelegramToDiscordBot:
         
         return {
             "token_calls": token_calls,
-            "token_limit": self.max_calls_per_token_weekly,
-            "remaining_calls": self.max_calls_per_token_weekly - token_calls,
-            "next_reset": self.weekly_reset_time + timedelta(days=self.reset_interval_days)
+            "token_limit": self.max_calls_per_token,
+            "remaining_calls": self.max_calls_per_token - token_calls,
+            "is_permanent": True  # No resets
         }
 
     def get_portfolio_stats(self) -> Dict[str, Any]:
@@ -179,7 +162,7 @@ class TelegramToDiscordBot:
         return {
             "total_tokens_called": total_tokens,
             "total_calls": total_calls,
-            "next_reset": self.weekly_reset_time + timedelta(days=self.reset_interval_days),
+            "is_permanent": True,  # No resets
             "token_breakdown": dict(self.token_call_counts)
         }
 
@@ -324,15 +307,33 @@ class TelegramToDiscordBot:
         lamports = int(float(self.buy_amount) * LAMPORTS_PER_SOL)
         sol_mint = "So11111111111111111111111111111111111111112"
 
-        try:
-            success, txn_sig = self.jupiter.swap(sol_mint, ca, lamports, self.slippage)
-        except Exception as exc:
-            logging.exception("self.jupiter.swap() raised: %s", exc)
-            self.send_to_discord(f"Swap call errored for {ca}: {exc}")
-            return
+        # Retry logic for failed buy transactions (max 30 seconds)
+        max_retries = 3
+        retry_delay = 10  # seconds
+        success = False
+        txn_sig = None
+        
+        for attempt in range(max_retries):
+            try:
+                success, txn_sig = self.jupiter.swap(sol_mint, ca, lamports, self.slippage)
+                if success:
+                    break
+                else:
+                    if attempt < max_retries - 1:
+                        logging.warning(f"Swap attempt {attempt + 1} failed for {ca}, retrying in {retry_delay}s...")
+                        await asyncio.sleep(retry_delay)
+                    else:
+                        logging.error(f"All {max_retries} swap attempts failed for {ca}")
+            except Exception as exc:
+                logging.exception(f"Swap attempt {attempt + 1} raised exception for {ca}: {exc}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(retry_delay)
+                else:
+                    self.send_to_discord(f"Swap call errored for {ca} after {max_retries} attempts: {exc}")
+                    return
 
         if not success:
-            msg = f"Swap failed for {ca}"
+            msg = f"🚫 Swap failed for {ca} after {max_retries} attempts - giving up"
             logging.error(msg)
             self.send_to_discord(msg)
             return
@@ -501,6 +502,47 @@ class TelegramToDiscordBot:
                     del self.pending_orders[ca]
                 return
 
+    def _filter_minimum_value_orders(self, ca: str, ladder_config: Dict[float, float], balance: int) -> Dict[float, float]:
+        """
+        Filter out orders that would be below the minimum $5 value.
+        
+        Args:
+            ca: Token contract address
+            ladder_config: Original ladder configuration
+            balance: Token balance in lamports
+            
+        Returns:
+            Filtered ladder configuration with only orders above minimum value
+        """
+        try:
+            # Get current token price in USD
+            token_info = solana_dex.SolanaDex.get_token_info(ca)
+            price_usd = token_info.get("price_usd", 0)
+            
+            if price_usd <= 0:
+                logging.warning(f"Could not get price for {ca}, using conservative filtering")
+                # If we can't get price, be very conservative and only allow high multipliers
+                return {mult: pct for mult, pct in ladder_config.items() if mult >= 10}
+            
+            # Calculate minimum token amount needed for $5 order
+            min_order_value_usd = 5.0
+            min_token_amount = int((min_order_value_usd / price_usd) * 1e9)  # Convert to token units
+            
+            filtered_ladder = {}
+            for mult, pct in ladder_config.items():
+                making_amount = int(balance * (pct / 100))
+                if making_amount >= min_token_amount:
+                    filtered_ladder[mult] = pct
+                else:
+                    logging.info(f"Filtered out {pct}% @ {mult}x for {ca} - would be ${(making_amount * price_usd / 1e9):.2f} (below $5 minimum)")
+            
+            return filtered_ladder
+            
+        except Exception as e:
+            logging.error(f"Error filtering minimum value orders for {ca}: {e}")
+            # Fallback: only allow high multipliers
+            return {mult: pct for mult, pct in ladder_config.items() if mult >= 10}
+
     async def _place_sell_ladder_with_retry(self, ca: str, ladder_config: Dict[float, float], expected_balance: int) -> bool:
         """Place sell ladder with retry logic - optimized for speed"""
         try:
@@ -514,9 +556,16 @@ class TelegramToDiscordBot:
             successful_orders = []
             failed_orders = []
             
+            # Filter out orders that would be below $5 minimum
+            filtered_ladder = self._filter_minimum_value_orders(ca, ladder_config, balance_to_use)
+            
+            if not filtered_ladder:
+                logging.warning(f"No valid orders above minimum value for {ca}")
+                return False
+            
             # Process orders in parallel for speed
             tasks = []
-            for mult, pct in sorted(ladder_config.items()):
+            for mult, pct in sorted(filtered_ladder.items()):
                 making_amount = int(balance_to_use * (pct / 100))
                 if making_amount == 0:
                     continue
@@ -527,7 +576,7 @@ class TelegramToDiscordBot:
             results = await asyncio.gather(*tasks, return_exceptions=True)
             
             for i, result in enumerate(results):
-                mult, pct = list(sorted(ladder_config.items()))[i]
+                mult, pct = list(sorted(filtered_ladder.items()))[i]
                 if isinstance(result, Exception):
                     failed_orders.append(f"{pct}% @ ×{mult}")
                     logging.error(f"Order failed: {result}")
@@ -600,8 +649,6 @@ class TelegramToDiscordBot:
 
     # ─────────────── Telegram event handler ───────────────
     async def _on_message(self, event) -> None:
-        self.reset_call_counts()
-
         msg_id = event.message.id
         if msg_id in self.processed_message_ids:
             return
@@ -631,18 +678,14 @@ class TelegramToDiscordBot:
                 if not can_call:
                     logging.warning(f"Token call blocked for {ca[:8]}: {reason}")
                     # Send limit notification to Discord
-                    remaining_time = self.weekly_reset_time + timedelta(days=self.reset_interval_days) - datetime.now()
-                    days_left = remaining_time.days
-                    hours_left = remaining_time.seconds // 3600
-                    
                     limit_msg = f"🚫 **Token Call Limit Reached**\n" \
                                f"Token: {ca[:8]}...\n" \
                                f"Reason: {reason}\n" \
-                               f"⏰ Reset in: {days_left}d {hours_left}h"
+                               f"⚠️ This is a PERMANENT limit - no resets"
                     self.send_to_discord(limit_msg)
                     continue
                 
-                logging.info("Valid CA %s queued (Global calls: %d/%d)", ca, self.token_call_counts.get(ca, 0) + 1, self.max_calls_per_token_weekly)
+                logging.info("Valid CA %s queued (Global calls: %d/%d)", ca, self.token_call_counts.get(ca, 0) + 1, self.max_calls_per_token)
                 self._enqueue(0, self.swap_tokens, ca, event)
                 self.log_call_in_db(username, ca, unix_timestamp)
                 self.increment_token_call_count(ca)
