@@ -1,2 +1,5 @@
 .env
 bot.log
+traderRankerTradingBot/__pycache__/TelegramToDiscordBot.cpython-311.pyc
+traderRankerTradingBot/user_session.session
+user_session.session
