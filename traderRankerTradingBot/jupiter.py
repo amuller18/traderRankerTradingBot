@@ -151,7 +151,7 @@ class JupiterSwap:
         self, input_mint: str, output_mint: str, amount: str, slippage_bps: str
     ) -> dict: 
         print('getting quote')
-        url = f'https://lite-api.jup.ag/swap/v1/quote/inputMint={str(input_mint)}&outputMint={str(output_mint)}&amount={str(amount)}&slippageBps={str(slippage_bps)}'
+        url = f'https://lite-api.jup.ag/swap/v1/quote?inputMint={str(input_mint)}&outputMint={str(output_mint)}&amount={str(amount)}&slippageBps={str(slippage_bps)}'
         print(url)
         r = requests.get(url)
         r.raise_for_status()
