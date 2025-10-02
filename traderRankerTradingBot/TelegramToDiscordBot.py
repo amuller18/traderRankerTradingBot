@@ -77,8 +77,8 @@ class TelegramToDiscordBot:
         # Market cap based ladder configurations
         self.mc_ladder_configs = {
             "ultra_aggressive": {  # < 100k MC, $10 entries
-                "multipliers": [3, 5, 10, 12.5, 20, 25, 40, 50, 60, 80, 90, 100],
-                "percentages": [33, 15, 10, 5, 10, 5, 7, 5, 3, 4, 2, 1]
+                "multipliers": [5, 10, 25, 50, 100],
+                "percentages": [25, 25, 15, 15,10]
             },
             "aggressive": {  # 100k - 1M MC, $20 entries
                 "multipliers": [3, 5, 10, 12.5, 20, 25, 40, 50, 60, 80, 90, 100],
